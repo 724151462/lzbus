@@ -1,0 +1,46 @@
+.map {
+  height: 100%;
+  width: 100%;
+}
+.win-left {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  width: 200px;
+  z-index: 5;
+  height: 85%;
+  background-color: rgba(21, 49, 73, 0.95);
+}
+.left-mult-cont{
+  color: #fff;
+  background-color: rgba(21, 49, 73, 0.95);
+}
+.win-left-mult {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 200px;
+  z-index: 5;
+}
+.win-mid {
+  position: absolute;
+  top: 120px;
+  left: 25%;
+  width: 771px;
+  z-index: 200;
+  background-color: rgba(21, 49, 73, 0.95);
+  border-radius: 10px;
+}
+.win-right {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  width: 220px;
+  z-index: 5;
+}
+.ant-input {
+  background-color: #295182;
+}
+.anticon-search {
+  color: #fff;
+}

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>demo07</title>
+    <link rel="stylesheet" type="text/css" href="http://lzgis.lzs.gx/3.20/dijit/themes/tundra/tundra.css"/>
+    <link rel="stylesheet" type="text/css" href="http://lzgis.lzs.gx/3.20/esri/css/esri.css" />
+</head>
+<body>
+    <div id="mapDiv" style="width:100%; height:600px; border:1px solid #000;"></div>
+    <button>添加点1</button>
+    <button>添加点2</button>
+    <button>添加点3</button>
+    <button>隐藏点1</button>
+    <button>隐藏点2</button>
+    <button>隐藏点3</button>
+    <button>添加线</button>
+    <button>添加面</button>
+    <button>添加圆</button>
+    <script type="text/javascript" src="http://lzgis.lzs.gx/3.20/init.js"></script>
+    <script>
+        require([
+            "esri/layers/ArcGISTiledMapServiceLayer",
+            "esri/map",
+            "esri/layers/GraphicsLayer",
+            "dojo/on","dojo/query","dojo/colors",
+            "esri/graphic","esri/symbols/SimpleMarkerSymbol",
+            "esri/symbols/SimpleLineSymbol",
+            "esri/symbols/SimpleFillSymbol",
+            "esri/geometry/Point",
+            "esri/geometry/Polyline","esri/geometry/Polygon",
+            "esri/geometry/Circle",
+            "dojo/domReady!"],function(ArcGISTiledMapServiceLayer,Map,GraphicsLayer,on,query,Color,Graphic,SimpleMarkerSymbol,SimpleLineSymbol,SimpleFillSymbol,Point,Polyline,Polygon,Circle){
+            var map = new Map("mapDiv")
+            var layer;
+              layer = new ArcGISTiledMapServiceLayer("http://lzgis.lzs.gx/gisserver/rest/services/liuzhoubasemap/MapServer");
+              map.addLayer(layer);
+              //创建客户端图层
+            var graphicsLayer=new GraphicsLayer();
+            //将客户端图层添加到地图中
+            map.addLayer(graphicsLayer);
+            //通过query查询到button对象
+            var btns=query("button");
+            var graphic;
+            var parr = [];
+            var pid = []
+            on(btns,"click",function(event){
+                //获得按钮的文本
+                var text=this.innerHTML;
+                console.log(text);
+                //定义线符号
+                var lineSymbol=new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASH, new Color([255, 0, 0]), 3);
+                //定义点符号
+                var pSymbol=new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE,20, lineSymbol, new Color([255, 0, 0]));
+                //定义面符号
+                var fill=SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID, lineSymbol,  new Color([255, 0, 0]));
+                //声明一个类型和图形
+                var geometry;
+                var points = [
+                            {"x":109.451288,"y":25.369552},
+                            {"x":109.456288,"y":25.369652},
+                            {"x":109.451288,"y":25.365552},
+                            ]
+                
+                //根据文本定义相应的geometry
+                switch(text)
+                {
+                    case "添加点1":
+                        geometry=new Point({
+                            "x":109.451288,
+                            "y":25.369552,
+                            "spatialReference":map.spatialReference
+                        });
+                        pid.push(0)
+                        graphic=new Graphic(geometry,pSymbol);
+                        parr.push({id: 0, p: graphic})
+                        
+                        break;
+                    case "添加点2":
+                        geometry=new Point({
+                            "x":109.456288,
+                            "y":25.369652,
+                            "spatialReference":map.spatialReference
+                        });
+                        pid.push(1)
+                        graphic=new Graphic(geometry,pSymbol);
+                        parr.push({id: 1, p: graphic})
+                        
+                        break;
+                    case "添加点3":
+                        geometry=new Point({
+                            "x":109.451288,
+                            "y":25.365552,
+                            "spatialReference":map.spatialReference
+                        });
+                        pid.push(2)
+                        graphic=new Graphic(geometry,pSymbol);
+                        parr.push({id: 2, p: graphic})
+                        
+                        break;
+                    case "隐藏点1":
+                        
+                        var index = pid.findIndex((item)=> {
+                            console.log(item)
+                            return item == 0
+                        })
+                        parr[index].p.hide()
+                        parr.splice(index, 1)
+                        pid.splice(index, 1)
+                        break;
+                    case "隐藏点2":
+                        
+                        var index = pid.findIndex((item)=> {
+                            return item == 1
+                        })
+                        parr[index].p.hide()
+                        console.log(index)
+                        parr.splice(index, 1)
+                        pid.splice(index, 1)
+                        break;
+                    case "隐藏点3":
+                        var index = pid.findIndex((item)=> {
+                            return item == 2
+                        })
+                        parr[index].p.hide()
+                        console.log(parr)
+                        parr.splice(index, 1)
+                        pid.splice(index, 1)
+                        break;
+                    case "添加线":
+                        //点的坐标对
+                        var  paths=[];
+                        paths[0]=[
+                            [109.451288,25.369552],
+                            [109.455288,25.364552],
+                            [109.453288,25.366552],
+                            [109.459288,25.367552],
+                        ];
+                        geometry=new Polyline({
+                            "paths":paths,
+                            "spatialReference":map.spatialReference
+                        })
+                        graphic=new Graphic(geometry,lineSymbol);
+                        break;
+                    case "添加面":
+                        //点的坐标对
+                        var ring=[];
+                        ring[0]=[
+                            [510275, 3986100],
+                            [510508, 3986162],
+                            [510596, 3986032],
+                            [510271, 3985847],
+                            [510275, 3986100]
+                        ];
+                        geometry=new Polygon({
+                            "rings":ring,
+                            "spatialReference":map.spatialReference
+                        });
+                        graphic=new Graphic(geometry,fill);
+                        break;
+                    case "添加圆":
+                        //圆心
+                        var p=new Point({
+                            "x":510706,
+                            "y":3986100,
+                            "spatialReference":map.spatialReference
+                        });
+                        //半径
+                        var r=20;
+                        geometry=new Circle(p,{
+                            "radius":r
+                        });
+                        graphic=new Graphic(geometry,fill);
+                        break;
+                }
+                //将图形添加到图层中
+                console.log(graphic)
+                graphicsLayer.add(graphic);
+            })
+        })
+    </script>
+</body>
+</html>

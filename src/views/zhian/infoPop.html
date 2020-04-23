@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.25/esri/css/esri.css">
+    <script src="https://js.arcgis.com/3.25/"></script>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        html,body,#mapDiv{
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="mapDiv"></div>
+    <script>
+        require([
+            "dojo/ready",
+            "dojo/parser",
+            "esri/map",
+            "esri/layers/ArcGISDynamicMapServiceLayer",
+            "esri/layers/FeatureLayer",
+            "esri/layers/GraphicsLayer",
+            "esri/graphic",
+            "esri/symbols/PictureMarkerSymbol",
+            "esri/InfoTemplate",
+            "dojo/domReady!"
+        ], function(ready,parser,Map,ArcGISDynamicMapServiceLayer,FeatureLayer,GraphicsLayer,Graphic,PictureMarkerSymbol,InfoTemplate) {
+            parser.parse();
+            var map = new Map("mapDiv");
+            var baseLayer=new ArcGISDynamicMapServiceLayer("http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer?f=json");
+            var featureLayer = new FeatureLayer("http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer?f=json",{
+                mode: FeatureLayer.MODE_SNAPSHOT,
+                outFields: ["*"]
+            });
+            var graphicsLayer = new GraphicsLayer();
+            var szPictureSymbol =  new PictureMarkerSymbol('../../assets/imgs/car.png', 16, 16);
+
+            map.addLayers([baseLayer,featureLayer,graphicsLayer]);
+
+            var infoTemplate = new InfoTemplate("Attributes",
+                "<p>FID:${FID}</p>" +
+                "<p>NAME:${NAME}</p>" +
+                "<p>address:${address}</p>"
+            );
+
+            var handle = map.on("update-end", function(){
+                for(var item of featureLayer.graphics){
+                    var graphic = new Graphic(item.geometry, szPictureSymbol,item.attributes);
+                    graphicsLayer.add(graphic);
+                }
+                graphicsLayer.setInfoTemplate(infoTemplate);
+                handle.remove();
+            });
+
+        })
+    </script>
+</body>
+</html>
